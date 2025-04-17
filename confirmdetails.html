@@ -1,68 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Confirm Details</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
       margin: 0;
-      padding: 20px;
+      background-color: #e6e6e6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
     }
+
+    .phone-frame {
+      background-color: #000;
+      border: 12px solid #222;
+      border-radius: 36px;
+      height: 700px;
+      width: 380px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .screen {
+      background-color: #f9f9f9;
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
     .container {
       background-color: #fff;
-      max-width: 600px;
-      margin: auto;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
+
     h1 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      font-size: 1.5em;
     }
+
     .detail {
       margin: 10px 0;
-      font-size: 1.1em;
+      font-size: 1em;
     }
+
     .detail strong {
       display: inline-block;
-      width: 150px;
+      width: 130px;
     }
+
     .button {
-      display: block;
       width: 100%;
       padding: 12px;
       margin-top: 20px;
       background-color: green;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 1em;
       cursor: pointer;
       text-align: center;
+      transition: background-color 0.3s;
     }
+
     .button:hover {
       background-color: darkgreen;
+    }
+
+    /* Optional scroll fix for iOS/Android simulator */
+    ::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Confirm Your Details</h1>
-    <div class="detail"><strong>Last Name:</strong> <span id="lastname">Loading...</span></div>
-    <div class="detail"><strong>First Name:</strong> <span id="firstname">Loading...</span></div>
-    <div class="detail"><strong>Phone Number:</strong> <span id="phone">Loading...</span></div>
-    <div class="detail"><strong>ID Number:</strong> <span id="idnumber">Loading...</span></div>
-    <div class="detail"><strong>Email Address:</strong> <span id="email">Loading...</span></div>
-    <div class="detail"><strong>Location:</strong> <span id="location">Loading...</span></div>
-    <div class="detail"><strong>Date of Birth:</strong> <span id="dob">Loading...</span></div>
-    <button class="button" onclick="confirmDetails()">Confirm</button>
+  <div class="phone-frame">
+    <div class="screen">
+      <div class="container">
+        <h1>Confirm Your Details</h1>
+        <div class="detail"><strong>Last Name:</strong> <span id="lastname">Loading...</span></div>
+        <div class="detail"><strong>First Name:</strong> <span id="firstname">Loading...</span></div>
+        <div class="detail"><strong>Phone Number:</strong> <span id="phone">Loading...</span></div>
+        <div class="detail"><strong>ID Number:</strong> <span id="idnumber">Loading...</span></div>
+        <div class="detail"><strong>Email Address:</strong> <span id="email">Loading...</span></div>
+        <div class="detail"><strong>Location:</strong> <span id="location">Loading...</span></div>
+        <div class="detail"><strong>Date of Birth:</strong> <span id="dob">Loading...</span></div>
+        <button class="button" onclick="confirmDetails()">Confirm</button>
+      </div>
+    </div>
   </div>
+
   <script>
-    // Retrieve details from localStorage (ensure that your signup page saves these details)
     document.getElementById('lastname').textContent = localStorage.getItem('lastname') || 'Not provided';
     document.getElementById('firstname').textContent = localStorage.getItem('firstname') || 'Not provided';
     document.getElementById('phone').textContent = localStorage.getItem('phone') || 'Not provided';
@@ -70,12 +107,10 @@
     document.getElementById('email').textContent = localStorage.getItem('email') || 'Not provided';
     document.getElementById('location').textContent = localStorage.getItem('location') || 'Not provided';
     document.getElementById('dob').textContent = localStorage.getItem('dob') || 'Not provided';
-    
-    // Redirect to otherdetails.html when the Confirm button is clicked
+
     function confirmDetails() {
       window.location.href = 'otherdetails.html';
     }
   </script>
 </body>
 </html>
-<script async data-explicit-opt-in="true" data-cookie-opt-in="true" data-deployment-id="dpl_5b1LwqfK8TAhDdAiQHJciFseYbKg" src="https://vercel.live/_next-live/feedback/feedback.js"></script>
