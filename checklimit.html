@@ -1,11 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Your Loan Eligibility</title>
-  <link rel="stylesheet" href="other.css">
   <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a1d, #2c3e50);
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      color: #ffffff;
+    }
+
+    canvas {
+      background-color: transparent;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 20px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 114, 255, 0.4);
+    }
+
     /* Overlay styling */
     .overlay {
       position: fixed;
@@ -20,14 +60,30 @@
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease-in-out;
+      z-index: 10;
     }
+
     .overlay.show {
       opacity: 1;
       visibility: visible;
     }
+
     .loading-gif {
       width: 100px;
       height: 100px;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 0 10px;
+      }
+
+      canvas {
+        width: 90vw;
+        height: 90vw;
+      }
     }
   </style>
 </head>
@@ -38,105 +94,257 @@
 
   <!-- Overlay with GIF -->
   <div class="overlay" id="overlay">
-    <img src="pro.gif" alt="Loading..." class="loading-gif">
+    <img src="pro.gif" alt="Loading..." class="loading-gif" />
   </div>
 
   <script>
-    // Get the canvas and its drawing context
     const canvas = document.getElementById('progressCanvas');
     const ctx = canvas.getContext('2d');
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = 120; // Radius for the circular progress arc
+    const radius = 120;
 
-    // Generate a random target value between 1500 and 3500 that is a multiple of 5
     function generateTarget() {
-      const minMultiple = 300; // 300 * 5 = 1500
-      const maxMultiple = 700; // 700 * 5 = 3500
-      const randomMultiple = Math.floor(Math.random() * (maxMultiple - minMultiple + 1)) + minMultiple;
-      return randomMultiple * 5;
+      const min = 300;
+      const max = 700;
+      return (Math.floor(Math.random() * (max - min + 1)) + min) * 5;
     }
 
     const targetValue = generateTarget();
     let currentValue = 0;
-
-    // For animation timing
     let startTime = null;
-    const animationDuration = 3000; // Animation duration in milliseconds
+    const duration = 3000;
 
-    // Function to format a number with commas
     function formatNumber(num) {
       return num.toLocaleString('en-US');
     }
 
-    // Function to draw the progress indicator on the canvas
     function drawProgress(value) {
-      // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw the background circle (light gray)
+      // Background circle
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#eee';
+      ctx.strokeStyle = '#333';
       ctx.lineWidth = 20;
       ctx.stroke();
 
-      // Calculate the progress angle (starting from -90° so that it begins at the top)
       const progress = value / targetValue;
       const endAngle = -Math.PI / 2 + progress * 2 * Math.PI;
 
-      // Draw the progress arc (blue)
+      // Foreground arc
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, -Math.PI / 2, endAngle);
-      ctx.strokeStyle = '#007BFF';
+      ctx.strokeStyle = '#00c6ff';
       ctx.lineWidth = 20;
       ctx.stroke();
 
-      // Display the current value as formatted text in the center
-      ctx.fillStyle = '#333';
-      ctx.font = '28px Arial';
+      // Value text
+      ctx.fillStyle = '#fff';
+      ctx.font = '24px Segoe UI';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('Ksh ' + formatNumber(value), centerX, centerY);
     }
 
-    // Animate the progress indicator from 0 up to the targetValue
     function animateProgress(timestamp) {
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
-      const progressRatio = Math.min(elapsed / animationDuration, 1);
-      
-      // Calculate the current value
-      currentValue = Math.floor(progressRatio * targetValue);
-      // Ensure the value ends with 0 or 5 by rounding to the nearest multiple of 5
-      currentValue = Math.round(currentValue / 5) * 5;
+      const ratio = Math.min(elapsed / duration, 1);
 
+      currentValue = Math.round((ratio * targetValue) / 5) * 5;
       drawProgress(currentValue);
 
-      if (progressRatio < 1) {
+      if (ratio < 1) {
         requestAnimationFrame(animateProgress);
       } else {
-        // Store the final target value in localStorage for later use
         localStorage.setItem('targetValue', targetValue);
       }
     }
 
-    // Start the animation
     requestAnimationFrame(animateProgress);
 
-    // Show loading GIF & Redirect on button click
-    document.getElementById('viewSavings').addEventListener('click', function() {
-      // Show the overlay with the GIF
-      const overlay = document.getElementById("overlay");
-      overlay.classList.add("show");
-
-      // Redirect after 2 seconds
-      setTimeout(function() {
+    document.getElementById('viewSavings').addEventListener('click', () => {
+      document.getElementById("overlay").classList.add("show");
+      setTimeout(() => {
         window.location.href = "verification.html";
       }, 2000);
     });
   </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Loan Eligibility</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a1d, #2c3e50);
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-<script async data-explicit-opt-in="true" data-cookie-opt-in="true" data-deployment-id="dpl_5b1LwqfK8TAhDdAiQHJciFseYbKg" src="https://vercel.live/_next-live/feedback/feedback.js"></script>
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      color: #ffffff;
+    }
+
+    canvas {
+      background-color: transparent;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 20px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 114, 255, 0.4);
+    }
+
+    /* Overlay styling */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease-in-out;
+      z-index: 10;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loading-gif {
+      width: 100px;
+      height: 100px;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 0 10px;
+      }
+
+      canvas {
+        width: 90vw;
+        height: 90vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Loan Eligibility</h1>
+  <canvas id="progressCanvas" width="300" height="300"></canvas>
+  <button id="viewSavings">Get Loan</button>
+
+  <!-- Overlay with GIF -->
+  <div class="overlay" id="overlay">
+    <img src="pro.gif" alt="Loading..." class="loading-gif" />
+  </div>
+
+  <script>
+    const canvas = document.getElementById('progressCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 120;
+
+    function generateTarget() {
+      const min = 300;
+      const max = 700;
+      return (Math.floor(Math.random() * (max - min + 1)) + min) * 5;
+    }
+
+    const targetValue = generateTarget();
+    let currentValue = 0;
+    let startTime = null;
+    const duration = 3000;
+
+    function formatNumber(num) {
+      return num.toLocaleString('en-US');
+    }
+
+    function drawProgress(value) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Background circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 20;
+      ctx.stroke();
+
+      const progress = value / targetValue;
+      const endAngle = -Math.PI / 2 + progress * 2 * Math.PI;
+
+      // Foreground arc
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, -Math.PI / 2, endAngle);
+      ctx.strokeStyle = '#00c6ff';
+      ctx.lineWidth = 20;
+      ctx.stroke();
+
+      // Value text
+      ctx.fillStyle = '#fff';
+      ctx.font = '24px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Ksh ' + formatNumber(value), centerX, centerY);
+    }
+
+    function animateProgress(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const ratio = Math.min(elapsed / duration, 1);
+
+      currentValue = Math.round((ratio * targetValue) / 5) * 5;
+      drawProgress(currentValue);
+
+      if (ratio < 1) {
+        requestAnimationFrame(animateProgress);
+      } else {
+        localStorage.setItem('targetValue', targetValue);
+      }
+    }
+
+    requestAnimationFrame(animateProgress);
+
+    document.getElementById('viewSavings').addEventListener('click', () => {
+      document.getElementById("overlay").classList.add("show");
+      setTimeout(() => {
+        window.location.href = "verification.html";
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
