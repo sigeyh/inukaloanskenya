@@ -1,1 +1,1 @@
-# inukaloanskenya
+# inukacredit
